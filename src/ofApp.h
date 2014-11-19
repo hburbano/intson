@@ -13,6 +13,11 @@
 #include "ofxKinectNui.h"
 #include "ofxKinectNuiPlayer.h"
 #include "ofxKinectNuiRecorder.h"
+#include "ofxOsc.h"
+//OSC Static Variables
+#define HOST "localhost"
+#define PORT 7001
+
 
 class ofxKinectNuiDrawTexture;
 class ofxKinectNuiDrawSkeleton;
@@ -56,9 +61,16 @@ class ofApp : public ofBaseApp {
 		void startPlayback();
 		void stopPlayback();
 
+		//Draw Pretty Colors
+
 		ofColor prettyColors(ofColor baseColor);
 		ofColor prettyColors();
 
+		//Variable to show help
+
+		bool showHelp;
+
+		//Kinect
 		ofxKinectNui kinect;
 
 		ofxKinectNuiPlayer kinectPlayer;
@@ -83,6 +95,7 @@ class ofApp : public ofBaseApp {
 		
 		int mRotationX, mRotationY;
 
+
 		ofVec3f center;
 		ofCamera camera;
 
@@ -95,5 +108,14 @@ class ofApp : public ofBaseApp {
 		//void keyReleased(int key);
 		//void gotMessage(ofMessage msg);
 		//void dragEvent(ofDragInfo dragInfo);
+
+
+		//OSC 
+		void sendOscMessage(string address);
+		void oscVolumeControl(float volume);
+		void volumeControl();
+		float maxDistance;
+		float minDistance;
+		ofxOscSender sender;
 
 };

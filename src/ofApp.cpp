@@ -14,10 +14,17 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
+	showHelp = false;
+	
+	// Setup OSC host
+	sender.setup(HOST, PORT);
+
 
 	leftHand.set(0, 0, 0);
 	rightHand.set(0, 0, 0);
 
+
+	//Basics parameters for ofxKinectNui in the app;
 	ofxKinectNui::InitSetting initSetting;
 	initSetting.grabVideo = false;
 	initSetting.grabDepth = false;
@@ -30,17 +37,11 @@ void ofApp::setup() {
 	initSetting.depthResolution = NUI_IMAGE_RESOLUTION_640x480;
 
 	kinect.init(initSetting);
-
 	kinect.open();
-
 	kinect.addKinectListener(this, &ofApp::kinectPlugged, &ofApp::kinectUnplugged);
-
-	ofSetFrameRate(60);
-	ofSetVerticalSync(true);
 
 	kinectSource = &kinect;
 	angle = kinect.getCurrentAngle();
-
 	bPlugged = kinect.isConnected();
 	nearClipping = kinect.getNearClippingDistance();
 	farClipping = kinect.getFarClippingDistance();
@@ -50,22 +51,20 @@ void ofApp::setup() {
 	bDrawVideo = false;
 	bDrawDepthLabel = false;
 	bDrawSkeleton = false;
+	
+	
+	//OSC Data
+
+	maxDistance = 2;
+	minDistance = 1;
+
+	//Video parameters
 	glEnable(GL_DEPTH_TEST);
 	ofSetFrameRate(30);
 	ofSetVerticalSync(false);
 
 	initMesh();
 
-	//calibratedTexture.allocate(kinect.getDepthResolutionWidth(), kinect.getDepthResolutionHeight(), GL_RGB);
-
-	//videoDraw_ = ofxKinectNuiDrawTexture::createTextureForVideo(kinect.getVideoResolution());
-	//depthDraw_ = ofxKinectNuiDrawTexture::createTextureForDepth(kinect.getDepthResolution());
-	//labelDraw_ = ofxKinectNuiDrawTexture::createTextureForLabel(kinect.getDepthResolution());
-	//skeletonDraw_ = new ofxKinectNuiDrawSkeleton();
-	//kinect.setVideoDrawer(videoDraw_);
-	//kinect.setDepthDrawer(depthDraw_);
-	//kinect.setLabelDrawer(labelDraw_);
-	//kinect.setSkeletonDrawer(skeletonDraw_);
 }
 
 //--------------------------------------------------------------
@@ -119,13 +118,9 @@ ofColor ofApp::prettyColors(ofColor baseColor){
 
 }
 
-
-
 ofColor ofApp::prettyColors(){
 	return prettyColors(ofColor(0, 0, 0));
 }
-
-//TODO: Implement a queue to restrict and amount of drawn points
 
 void ofApp::paintLines(){
 
@@ -294,20 +289,20 @@ void ofApp::draw() {
 		ofDrawBitmapString(kinectReport.str(), 200, 300);
 	}
 
-	ofSetColor(255, 255, 255);
+	ofSetColor(0, 0, 0);
 	stringstream reportStream;
-	
+
 	// TODO show and hide help
 
-	reportStream << "TODO: Organice help";
-
-	//reportStream << "fps: " << ofGetFrameRate() << "  Kinect Nearmode: " << kinect.isNearmode() << endl
-	//	<< "press 'c' to close the stream and 'o' to open it again, stream is: " << kinect.isOpened() << endl
-	//	<< "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
-	//	<< "press LEFT and RIGHT to change the far clipping distance: " << farClipping << " mm" << endl
-	//	<< "press '+' and '-' to change the near clipping distance: " << nearClipping << " mm" << endl;
-	ofDrawBitmapString(reportStream.str(), 20, 50);
-
+	//reportStream << "TODO: Organice help";
+	if (showHelp){
+		reportStream << "fps: " << ofGetFrameRate() << endl
+		<< "Press 'c' to close the stream and 'o' to open it again, stream is: " << kinect.isOpened() << "." << endl
+		<< "Press UP and DOWN to change the tilt angle: " << angle << " degrees." << endl
+		<< "Press H to toogle this help."<< endl
+		<< "Press F to toogle fullscreen."<< endl;
+		ofDrawBitmapString(reportStream.str(), 20, 50);
+	}
 }
 
 //--------------------------------------------------------------
@@ -368,6 +363,10 @@ void ofApp::drawHands(){
 		permaPoint.str("R");
 		ofDrawBitmapString(permaPoint.str(),rightHand.x,rightHand.y);
 	}
+
+	//Control volumen with distance betwen hands
+
+	volumeControl();
 	paintLines();
 }
 
@@ -375,7 +374,7 @@ void ofApp::fabricData(){
 	int maxDrawn= 10000;
 	ofPoint* skeletonPoints[ofxKinectNui::SKELETON_COUNT];
 	kinect.getSkeletonPoints(skeletonPoints);	
-	
+
 	if(leftHPoints.size()>maxDrawn){
 		leftHPoints.erase (leftHPoints.begin());
 	}
@@ -476,14 +475,7 @@ void ofApp::keyPressed (int key) {
 
 	case 'h': // draw hands only
 	case 'H':
-		bDrawHandsOnly = !bDrawHandsOnly;
-		if(bDrawHandsOnly){
-			bDrawCalibratedTexture = false;
-			bDrawVideo = false;
-			bDrawDepthLabel = false;
-			bDrawSkeleton = false;
-			glEnable(GL_DEPTH_TEST);
-		}
+		showHelp = !showHelp;
 		break;
 	case 'o': // open stream
 	case 'O':
@@ -507,31 +499,45 @@ void ofApp::keyPressed (int key) {
 		}
 		kinect.setAngle(angle);
 		break;
-	case OF_KEY_LEFT: // increase the far clipping distance
-		if(farClipping > nearClipping + 10){
-			farClipping -= 10;
-			kinectSource->setFarClippingDistance(farClipping);
-		}
-		break;
-	case OF_KEY_RIGHT: // decrease the far clipping distance
-		if(farClipping < 4000){
-			farClipping += 10;
-			kinectSource->setFarClippingDistance(farClipping);
-		}
-		break;
-	case '+': // increase the near clipping distance
-		if(nearClipping < farClipping - 10){
-			nearClipping += 10;
-			kinectSource->setNearClippingDistance(nearClipping);
-		}
-		break;
-	case '-': // decrease the near clipping distance
-		if(nearClipping >= 10){
-			nearClipping -= 10;
-			kinectSource->setNearClippingDistance(nearClipping);
-		}
-		break;
 	}
+}
+
+
+//OscMesasge Sender test
+
+void ofApp::sendOscMessage(string address){
+	ofxOscMessage msg;
+	msg.setAddress(address);
+
+	msg.addIntArg(1);
+	msg.addFloatArg(3.5f);
+	msg.addFloatArg(ofGetElapsedTimef());
+	sender.sendMessage(msg);
+}
+
+
+void ofApp::volumeControl(){
+	
+	maxDistance = maxDistance - 0.1f;
+	minDistance = minDistance + 0.1f;
+	
+	float currentDistance = leftHand.distance(rightHand);
+	
+	if(currentDistance>maxDistance){
+		maxDistance = currentDistance;
+	}
+
+	float newvol = currentDistance / maxDistance;
+
+	oscVolumeControl(newvol);
+
+}
+
+void ofApp::oscVolumeControl(float volume){
+	ofxOscMessage msg;
+	msg.setAddress("/activelayer/audio/volume/values");
+	msg.addFloatArg(volume);
+	sender.sendMessage(msg);
 }
 
 //--------------------------------------------------------------
@@ -546,6 +552,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+	
 }
 
 //--------------------------------------------------------------
