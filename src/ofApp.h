@@ -14,9 +14,12 @@
 #include "ofxKinectNuiPlayer.h"
 #include "ofxKinectNuiRecorder.h"
 #include "ofxOsc.h"
+
+
+
 //OSC Static Variables
-#define HOST "localhost"
-#define PORT 7001
+#define HOST "192.168.1.132"
+#define PORT 7200
 
 
 class ofxKinectNuiDrawTexture;
@@ -108,14 +111,17 @@ class ofApp : public ofBaseApp {
 		//void keyReleased(int key);
 		//void gotMessage(ofMessage msg);
 		//void dragEvent(ofDragInfo dragInfo);
-
-
-		//OSC 
-		void sendOscMessage(string address);
+		
+		//OSC
 		void oscVolumeControl(float volume);
 		void volumeControl();
 		float maxDistance;
 		float minDistance;
 		ofxOscSender sender;
-
+		//OSC Performance
+		vector<float> pTime;
+		vector<ofxOscMessage> oscMessages;
+		void initOSCMessages();
+		void addOSCSequence(float time, string route, int arg);
+		void OSCControlSend();
 };

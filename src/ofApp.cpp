@@ -10,6 +10,8 @@
 #include "ofApp.h"
 #include "ofxKinectNuiDraw.h"
 #include "ofMath.h"
+#include "ofUtils.h"
+#include <iomanip>
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -54,9 +56,10 @@ void ofApp::setup() {
 	
 	
 	//OSC Data
-
 	maxDistance = 2;
 	minDistance = 1;
+
+	initOSCMessages();
 
 	//Video parameters
 	glEnable(GL_DEPTH_TEST);
@@ -288,20 +291,188 @@ void ofApp::draw() {
 		kinectReport << "Kinect is unplugged..." << endl;
 		ofDrawBitmapString(kinectReport.str(), 200, 300);
 	}
-
-	ofSetColor(0, 0, 0);
-	stringstream reportStream;
-
+	
 	// TODO show and hide help
-
 	//reportStream << "TODO: Organice help";
 	if (showHelp){
-		reportStream << "fps: " << ofGetFrameRate() << endl
+		ofSetColor(255, 255, 255);
+		stringstream reportStream;		
+		reportStream 
+		<< "FPS: " << std::fixed << std::setw(8) << std::setprecision(3) << ofGetFrameRate() 
+		<< " S:" << std::fixed << std::setw(8) << std::setprecision(3) << ofGetElapsedTimef() << endl
 		<< "Press 'c' to close the stream and 'o' to open it again, stream is: " << kinect.isOpened() << "." << endl
 		<< "Press UP and DOWN to change the tilt angle: " << angle << " degrees." << endl
 		<< "Press H to toogle this help."<< endl
 		<< "Press F to toogle fullscreen."<< endl;
 		ofDrawBitmapString(reportStream.str(), 20, 50);
+	}
+
+	OSCControlSend();
+}
+
+void ofApp::initOSCMessages(){
+	addOSCSequence(5.f,"/layer5/clip1/connect",1);
+	addOSCSequence(5.f,"/layer3/clip1/connect",1);
+	addOSCSequence(5.f,"/layer3/clip2/connect",1);
+	addOSCSequence(5.f,"/layer3/clip3/connect",1);
+	addOSCSequence(18.f,"/layer3/clip4/connect",1);
+	addOSCSequence(18.f,"/layer4/clip3/connect",1);
+	addOSCSequence(18.f,"/layer4/clip7/connect",1);
+	addOSCSequence(36.f,"/layer3/clip5/connect",1);
+	addOSCSequence(36.f,"/layer2/clip3/connect",1);
+	addOSCSequence(36.f,"/layer4/clip1/connect",1);
+	addOSCSequence(36.f,"/layer3/clip6/connect",1);
+	addOSCSequence(36.f,"/layer1/clip2/connect",1);
+	addOSCSequence(54.f,"/layer3/clip6/connect",1);
+	addOSCSequence(54.f,"/layer4/clip20/connect",1);
+	addOSCSequence(54.f,"/layer3/clip7/connect",1);
+	addOSCSequence(54.f,"/layer3/clip8/connect",1);
+	addOSCSequence(54.f,"/layer3/clip9/connect",1);
+	addOSCSequence(72.f,"/layer3/clip7/connect",1);
+	addOSCSequence(72.f,"/layer1/clip2/connect",1);
+	addOSCSequence(72.f,"/layer3/clip23/connect",1);
+	addOSCSequence(72.f,"/layer3/clip19/connect",1);
+	addOSCSequence(90.f,"/layer3/clip8/connect",1);
+	addOSCSequence(90.f,"/layer3/clip9/connect",1);
+	addOSCSequence(90.f,"/layer4/clip7/connect",1);
+	addOSCSequence(90.f,"/layer3/clip3/connect",1);
+	addOSCSequence(108.f,"/layer3/clip10/connect",1);
+	addOSCSequence(108.f,"/layer2/clip7/connect",1);
+	addOSCSequence(108.f,"/layer4/clip14/connect",1);
+	addOSCSequence(108.f,"/layer3/clip20/connect",1);
+	addOSCSequence(126.f,"/layer3/clip11/connect",1);
+	addOSCSequence(126.f,"/layer1/clip1/connect",1);
+	addOSCSequence(126.f,"/layer1/clip7/connect",1);
+	addOSCSequence(126.f,"/layer4/clip16/connect",1);
+	addOSCSequence(144.f,"/layer3/clip12/connect",1);
+	addOSCSequence(144.f,"/layer4/clip1/connect",1);
+	addOSCSequence(144.f,"/layer3/clip20/connect",1);
+	addOSCSequence(144.f,"/layer3/clip13/connect",1);
+	addOSCSequence(162.f,"/layer3/clip13/connect",1);
+	addOSCSequence(162.f,"/layer3/clip14/connect",1);
+	addOSCSequence(162.f,"/layer4/clip19/connect",1);
+	addOSCSequence(162.f,"/layer3/clip13/connect",1);
+	addOSCSequence(180.f,"/layer3/clip23/connect",1);
+	addOSCSequence(180.f,"/layer1/clip2/connect",1);
+	addOSCSequence(180.f,"/layer2/clip19/connect",1);
+	addOSCSequence(180.f,"/layer3/clip20/connect",1);
+	addOSCSequence(198.f,"/layer3/clip23/connect",1);
+	addOSCSequence(198.f,"/layer1/clip2/connect",1);
+	addOSCSequence(198.f,"/layer2/clip19/connect",1);
+	addOSCSequence(198.f,"/layer3/clip20/connect",1);
+	addOSCSequence(216.f,"/layer3/clip15/connect",1);
+	addOSCSequence(216.f,"/layer3/clip16/connect",1);
+	addOSCSequence(216.f,"/layer2/clip19/connect",1);
+	addOSCSequence(216.f,"/layer4/clip23/connect",1);
+	addOSCSequence(216.f,"/layer1/clip19/connect",1);
+	addOSCSequence(234.f,"/layer5/clip1/connect",1);
+	addOSCSequence(234.f,"/layer3/clip1/connect",1);
+	addOSCSequence(234.f,"/layer3/clip2/connect",1);
+	addOSCSequence(234.f,"/layer3/clip3/connect",1);
+	addOSCSequence(252.f,"/layer3/clip23/connect",1);
+	addOSCSequence(252.f,"/layer1/clip2/connect",1);
+	addOSCSequence(252.f,"/layer2/clip19/connect",1);
+	addOSCSequence(252.f,"/layer3/clip20/connect",1);
+	addOSCSequence(270.f,"/layer3/clip13/connect",1);
+	addOSCSequence(270.f,"/layer3/clip14/connect",1);
+	addOSCSequence(270.f,"/layer4/clip19/connect",1);
+	addOSCSequence(270.f,"/layer3/clip13/connect",1);
+	addOSCSequence(288.f,"/layer3/clip16/connect",1);
+	addOSCSequence(288.f,"/layer3/clip17/connect",1);
+	addOSCSequence(288.f,"/layer4/clip16/connect",1);
+	addOSCSequence(288.f,"/layer4/clip20/connect",1);
+	addOSCSequence(306.f,"/layer3/clip24/connect",1);
+	addOSCSequence(306.f,"/layer2/clip20/connect",1);
+	addOSCSequence(306.f,"/layer4/clip23/connect",1);
+	addOSCSequence(306.f,"/layer1/clip19/connect",1);
+	addOSCSequence(324.f,"/layer4/clip23/connect",1);
+	addOSCSequence(324.f,"/layer1/clip19/connect",1);
+	addOSCSequence(324.f,"/layer3/clip24/connect",1);
+	addOSCSequence(342.f,"/layer1/clip15/connect",1);
+	addOSCSequence(342.f,"/layer3/clip21/connect",1);
+	addOSCSequence(342.f,"/layer4/clip9/connect",1);
+	addOSCSequence(360.f,"/layer1/clip16/connect",1);
+	addOSCSequence(360.f,"/layer4/clip9/connect",1);
+	addOSCSequence(360.f,"/layer3/clip20/connect",1);
+	addOSCSequence(360.f,"/layer1/clip17/connect",1);
+	addOSCSequence(378.f,"/layer1/clip8/connect",1);
+	addOSCSequence(378.f,"/layer2/clip7/connect",1);
+	addOSCSequence(378.f,"/layer3/clip24/connect",1);
+	addOSCSequence(378.f,"/layer4/clip9/connect",1);
+	addOSCSequence(378.f,"/layer2/clip3/connect",1);
+	addOSCSequence(396.f,"/layer1/clip8/connect",1);
+	addOSCSequence(396.f,"/layer2/clip7/connect",1);
+	addOSCSequence(396.f,"/layer4/clip9/connect",1);
+	addOSCSequence(396.f,"/layer2/clip3/connect",1);
+	addOSCSequence(414.f,"/layer3/clip11/connect",1);
+	addOSCSequence(414.f,"/layer1/clip1/connect",1);
+	addOSCSequence(414.f,"/layer1/clip7/connect",1);
+	addOSCSequence(414.f,"/layer4/clip16/connect",1);
+	addOSCSequence(414.f,"/layer1/clip13/connect",1);
+	addOSCSequence(432.f,"/layer3/clip13/connect",1);
+	addOSCSequence(432.f,"/layer3/clip14/connect",1);
+	addOSCSequence(432.f,"/layer4/clip19/connect",1);
+	addOSCSequence(432.f,"/layer1/clip13/connect",1);
+	addOSCSequence(450.f,"/layer4/clip11/connect",1);
+	addOSCSequence(450.f,"/layer1/clip2/connect",1);
+	addOSCSequence(450.f,"/layer1/clip3/connect",1);
+	addOSCSequence(468.f,"/layer4/clip5/connect",1);
+	addOSCSequence(468.f,"/layer2/clip16/connect",1);
+	addOSCSequence(468.f,"/layer2/clip13/connect",1);
+	addOSCSequence(486.f,"/layer3/clip23/connect",1);
+	addOSCSequence(486.f,"/layer1/clip2/connect",1);
+	addOSCSequence(486.f,"/layer2/clip19/connect",1);
+	addOSCSequence(486.f,"/layer3/clip20/connect",1);
+	addOSCSequence(504.f,"/layer3/clip5/connect",1);
+	addOSCSequence(504.f,"/layer2/clip3/connect",1);
+	addOSCSequence(504.f,"/layer4/clip1/connect",1);
+	addOSCSequence(522.f,"/layer3/clip6/connect",1);
+	addOSCSequence(522.f,"/layer1/clip2/connect",1);
+	addOSCSequence(522.f,"/layer4/clip23/connect",1);
+	addOSCSequence(522.f,"/layer1/clip19/connect",1);
+	addOSCSequence(540.f,"/layer3/clip16/connect",1);
+	addOSCSequence(540.f,"/layer4/clip15/connect",1);
+	addOSCSequence(540.f,"/layer4/clip18/connect",1);
+	addOSCSequence(540.f,"/layer4/clip19/connect",1);
+	addOSCSequence(558.f,"/layer3/clip24/connect",1);
+	addOSCSequence(558.f,"/layer1/clip16/connect",1);
+	addOSCSequence(558.f,"/layer1/clip18/connect",1);
+	addOSCSequence(558.f,"/layer4/clip19/connect",1);
+	addOSCSequence(576.f,"/layer2/clip7/connect",1);
+	addOSCSequence(576.f,"/layer3/clip24/connect",1);
+	addOSCSequence(576.f,"/layer4/clip3/connect",1);
+	addOSCSequence(576.f,"/layer4/clip4/connect",1);
+	addOSCSequence(576.f,"/layer4/clip6/connect",1);
+	addOSCSequence(594.f,"/layer3/clip19/connect",1);
+	addOSCSequence(594.f,"/layer4/clip7/connect",1);
+	addOSCSequence(594.f,"/layer1/clip19/connect",1);
+	addOSCSequence(594.f,"/layer3/clip20/connect",1);
+	addOSCSequence(612.f,"/layer1/clip19/connect",1);
+	addOSCSequence(612.f,"/layer3/clip22/connect",1);
+	addOSCSequence(612.f,"/layer4/clip22/connect",1);
+}
+
+void ofApp::addOSCSequence(float time, string route, int arg){
+	ofxOscMessage msg;
+	msg.setAddress(route);
+	msg.addIntArg(arg);
+	pTime.push_back(time);
+	oscMessages.push_back(msg);
+}
+
+bool simpFlotC(float a, float b)
+{
+    return fabs(a - b) < 0.1f;
+}
+
+void ofApp::OSCControlSend(){
+	
+	if(simpFlotC(pTime.front(),ofGetElapsedTimef())&& pTime.size()>0){
+		ofLogNotice() << "Front: " << pTime.front();
+		ofLogNotice() << " Time:" << ofGetElapsedTimef() << endl;
+		sender.sendMessage(oscMessages.at(0));
+		pTime.erase(pTime.begin());
+		oscMessages.erase(oscMessages.begin());
 	}
 }
 
@@ -503,23 +674,10 @@ void ofApp::keyPressed (int key) {
 }
 
 
-//OscMesasge Sender test
-
-void ofApp::sendOscMessage(string address){
-	ofxOscMessage msg;
-	msg.setAddress(address);
-
-	msg.addIntArg(1);
-	msg.addFloatArg(3.5f);
-	msg.addFloatArg(ofGetElapsedTimef());
-	sender.sendMessage(msg);
-}
-
-
 void ofApp::volumeControl(){
 	
-	maxDistance = maxDistance - 0.1f;
-	minDistance = minDistance + 0.1f;
+	maxDistance -= 0.1f;
+	minDistance += 0.1f;
 	
 	float currentDistance = leftHand.distance(rightHand);
 	
@@ -535,7 +693,7 @@ void ofApp::volumeControl(){
 
 void ofApp::oscVolumeControl(float volume){
 	ofxOscMessage msg;
-	msg.setAddress("/activelayer/audio/volume/values");
+	msg.setAddress("/layer5/audio/volume/values");
 	msg.addFloatArg(volume);
 	sender.sendMessage(msg);
 }
